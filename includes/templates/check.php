@@ -9,11 +9,11 @@
 ?>
 
 <div class="d1m1">
-    <h2>1D1M Check</h2>
+    <h1>1D1M Check</h1>
     <p class="total-count">
-        <?php
-	    printf( _nx( 'Total %d song collected.', 'Total %d songs collected.', 'Total number of songs.', 'm1d1' ), $total_count );
-	    ?>
+		<?php
+		printf( _nx( 'Total %d song collected.', 'Total %d songs collected.', 'Total number of songs.', 'm1d1' ), $total_count );
+		?>
     </p>
     <form action="" method="get">
         <fieldset>
@@ -22,8 +22,8 @@
             <input id="keyword" name="keyword" type="search" autocomplete="off"
                    value="<?php echo esc_attr( $keyword ); ?>">
         </fieldset>
-        <p>
-            <button type="submit">Search</button>
+        <p class="button-wrap">
+            <button type="submit">Submit</button>
         </p>
     </form>
 
@@ -37,22 +37,27 @@
             <table class="">
                 <thead>
                 <tr>
-                    <th>Seq.</th>
-                    <th>Artist</th>
-                    <th>Title</th>
-                    <th>Rating</th>
-                    <th>Link</th>
+                    <th class="col-seq">Seq.</th>
+                    <th class="col-artist">Artist</th>
+                    <th class="col-title">Title</th>
+                    <th class="col-rating">Rating</th>
                 </tr>
                 </thead>
                 <tbody>
 				<?php foreach ( $rows as $row ): ?>
-                <tr>
-                    <td><?php echo esc_html( $row->sequence ); ?></td>
-                    <td><?php echo esc_html( $row->artist ); ?></td>
-                    <td><?php echo esc_html( $row->title ); ?></td>
-                    <td><?php echo esc_html( $row->rating ); ?></td>
-                    <td><?php echo esc_html( $row->yt_id ); ?></td>
-                </tr>
+                    <tr>
+                        <td class="col-seq"><?php echo esc_html( $row->sequence ); ?></td>
+                        <td class="col-artist"><?php echo esc_html( $row->artist ); ?></td>
+                        <td class="col-title">
+							<?php if ( $row->yt_id ) : ?>
+                                <a href="<?php echo esc_url( "https://music.youtube.com/watch?v=$row->yt_id" ); ?>"
+                                   target="_blank"><?php echo esc_html( $row->title ); ?></a>
+							<?php else: ?>
+								<?php echo esc_html( $row->title ); ?>
+							<?php endif; ?>
+                        </td>
+                        <td class="col-rating"><?php echo esc_html( $row->rating ); ?></td>
+                    </tr>
 				<?php endforeach; ?>
                 </tbody>
             </table>

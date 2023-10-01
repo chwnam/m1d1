@@ -1,0 +1,73 @@
+.d1m1 {
+    & label {
+        cursor: pointer;
+        display: inline-block;
+        margin-right: 2rem;
+    }
+
+    & .rows-count {
+        font-size: 0.9em;
+        margin-top: 2rem;
+        margin-bottom: 0.2rem;
+    }
+
+    & .button-wrap {
+        margin: 0.6rem 0;
+        text-align: right;
+    }
+
+    & button {
+        background-color: black;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2em;
+        font-weight: 500;
+        outline: none;
+        padding: 8px 16px;
+    }
+
+    & table {
+        border-collapse: collapse;
+        width: 100%;
+
+        & th, & td {
+            padding: 0.25rem 0.6rem;
+        }
+
+        & > thead th {
+            background-color: black;
+            border-bottom: 1px solid black;
+            color: white;
+        }
+
+        & > tbody td {
+            border-bottom: 1px solid black;
+        }
+
+        & > tbody .col-artist,
+        & > tbody .col-title {
+            max-width: 12rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        & > tbody .col-title > a {
+            text-decoration: none;
+        }
+
+        & > tbody .col-seq {
+            text-align: center;
+        }
+
+        & > tbody .col-rating {
+            text-align: right;
+        }
+
+        & tr > th:not(:last-of-type),
+        & tr > td:not(:last-of-type) {
+            border-right: 1px solid black;
+        }
+    }
+}
