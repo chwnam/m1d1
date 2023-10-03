@@ -69,7 +69,7 @@ if ( ! class_exists( 'M1D1_FB_Post' ) ) {
 			}
 
 			if ( $head < $tail ) {
-				$output->message = implode( "\n", array_slice( $lines, $head, $tail ) );
+				$output->description = implode( "\n", array_slice( $lines, $head, $tail ) );
 			}
 
 			return $output;

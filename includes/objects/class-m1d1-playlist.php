@@ -17,7 +17,7 @@ if ( ! class_exists( 'M1D1_Playlist' ) ) {
 		public static function from_fb_post( M1D1_FB_Post $post ): static {
 			$instance = new static();
 
-			$parsed = $post->parse_message( $post->message );
+			$parsed = $post->parse_message();
 
 			$instance->fb_id        = $post->id;
 			$instance->artist       = $parsed->artist;

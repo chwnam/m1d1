@@ -136,7 +136,7 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 				}
 			}
 
-			if ( ! ( $to_update && $to_insert ) ) {
+			if ( ! $to_update && ! $to_insert ) {
 				WP_CLI::success( '🤟 All posts are fetched. Nothing to do for now! 🤟' );
 			}
 
