@@ -36,6 +36,29 @@ if ( ! function_exists( 'm1d1_get_client_token' ) ) {
 }
 
 
+if ( ! function_exists( 'm1d1_get_python_path' ) ) {
+	/**
+	 * Get PYTHON PATH
+	 *
+	 * @return string
+	 */
+	function m1d1_get_python_path(): string {
+		return defined( 'M1D1_PYTHON_PATH' ) ? M1D1_PYTHON_PATH : '';
+	}
+}
+
+
+if ( ! function_exists( 'm1d1_get_playlist_path' ) ) {
+	/**
+	 * Get PLAYLIST PATH
+	 *
+	 * @return string
+	 */
+	function m1d1_get_playlist_path(): string {
+		return defined( 'M1D1_PLAYLIST_PATH' ) ? M1D1_PLAYLIST_PATH : '';
+	}
+}
+
 if ( ! function_exists( 'm1d1_get_settings' ) ) {
 	/**
 	 * @return object{access_token: string, data_access_expiration_time: int, expires_in: int, user_id: string}

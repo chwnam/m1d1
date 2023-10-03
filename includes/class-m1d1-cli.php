@@ -29,7 +29,7 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 				$status = $fb_api->device_login_status( $code );
 				if ( isset( $status->error ) ) {
 					match ( $status->error->error_subcode ) {
-						1349174          => WP_CLI::line( "Polling and waiting response ..." ),
+						1349174 => WP_CLI::line( "Polling and waiting response ..." ),
 						1349152, 1349172 => WP_CLI::error( $status->error->error_user_msg ),
 					};
 				} else {
@@ -50,6 +50,8 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 		/**
 		 * Grab user posts
 		 *
+		 * @subcommand dump-posts
+		 *
 		 * ## OPTIONS
 		 * [<max_loop>]
 		 * : Maximum loop.
@@ -59,7 +61,7 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 		 *
 		 * @throws WP_CLI\ExitException
 		 */
-		public function posts( array $args ): void {
+		public function dump_posts( array $args ): void {
 			$fb_api   = m1d1_get_fb_api();
 			$setting  = m1d1_get_settings();
 			$max_loop = (int) $args[0];
@@ -72,8 +74,20 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 			);
 		}
 
+//		public function test() {
+//			$content = file_get_contents( '/home/changwoo/posts.json' );
+//			$posts   = json_decode( $content );
+//			foreach( $posts as $post ) {
+//				$post = M1D1_FB_Post::from_json( $post );
+//				$post = M1D1_Playlist::from_fb_post( $post );
+//				print_r( $post );
+//			}
+//		}
+
 		/**
 		 * Import #1일1메탈 posts to table
+		 *
+		 * @subcommaind import-posts
 		 *
 		 * ## OPTIONS
 		 * [<max_loop>]
@@ -84,7 +98,7 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 		 *
 		 * @throws WP_CLI\ExitException
 		 */
-		public function import( array $args ): void {
+		public function import_posts( array $args ): void {
 			global $wpdb;
 
 			$fb_api   = m1d1_get_fb_api();
@@ -109,12 +123,14 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 
 			// Check for updates.
 			if ( $playlists ) {
-				$placeholder    = implode( ', ', array_pad( [], count( $playlists ), '%s' ) );
-				$query          = $wpdb->prepare(
+				$placeholder = implode( ', ', array_pad( [], count( $playlists ), '%s' ) );
+
+				$query = $wpdb->prepare(
 					"SELECT fb_id, updated_time FROM {$wpdb->prefix}m1d1_playlist" .
 					" WHERE fb_id IN ($placeholder)",
 					array_keys( $playlists ),
 				);
+
 				$existing_posts = $wpdb->get_results( $query, OBJECT_K );
 
 				foreach ( $playlists as $playlist ) {
@@ -185,6 +201,72 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 				}
 			}
 		}
+
+		/**
+		 * Import 1일1메탈 Yotube Music playlist to table
+		 *
+		 * @subcommand import-playlist
+		 *
+		 * @throws WP_CLI\ExitException
+		 */
+		public function import_playlist(): void {
+			global $wpdb;
+
+			$python_path = m1d1_get_python_path();
+			if ( ! $python_path ) {
+				WP_CLI::error( "'M1D1_PYTHON_PATH' not found in the wp-config.php!" );
+			}
+
+			$playlist_path = m1d1_get_playlist_path();
+			if ( ! $python_path ) {
+				WP_CLI::error( "'M1D1_PLAYLIST_PATH' not found in the wp-config.php!" );
+			}
+
+			$command = sprintf( '%s %s', escapeshellcmd( $python_path ), escapeshellarg( $playlist_path ) );
+			exec( $command, $output, $result );
+
+			if ( 0 !== $result ) {
+				WP_CLI::error( 'Playlist script returned ' . $result );
+			}
+
+			$tracks = json_decode( implode( '', $output ) );
+
+			if ( false === $tracks ) {
+				WP_CLI::error( 'Playlist is not a proper JSON.' );
+			} elseif ( empty( $tracks ) ) {
+				WP_CLI::error( 'Playlist is empty.' );
+			}
+
+			$placeholder = implode( ', ', array_pad( [], count( $tracks ), '%d' ) );
+
+			$query = $wpdb->prepare(
+				"SELECT sequence, id FROM {$wpdb->prefix}m1d1_playlist" .
+				" WHERE sequence IN ($placeholder) AND yt_id IS null" .
+				" ORDER BY sequence DESC",
+				array_map( fn( $track ) => $track->sequence, $tracks )
+			);
+
+			$records = $wpdb->get_results( $query, OBJECT_K );
+			if ( empty( $records ) ) {
+				WP_CLI::success( '🤟 All tracks are fetched. Nothing to do for now! 🤟' );
+				return;
+			}
+
+			foreach ( $tracks as $track ) {
+				if ( isset( $records[ $track->sequence ] ) ) {
+					$wpdb->update(
+						"{$wpdb->prefix}m1d1_playlist",
+						[
+							'yt_id'  => $track->yt_id,
+							'length' => $track->length,
+						],
+						[ 'id' => $records[ $track->sequence ]->id ]
+					);
+					WP_CLI::success( 'Sequence ' . $track->sequence . ' is successfully updated.' );
+				}
+			}
+		}
+
 
 		/**
 		 * @param M1D1_FB_API $fb_api

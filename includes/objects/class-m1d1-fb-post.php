@@ -12,6 +12,17 @@ if ( ! class_exists( 'M1D1_FB_Post' ) ) {
 		) {
 		}
 
+		public static function from_json( stdClass $object ): static {
+			return new static(
+				$object->id,
+				$object->created_time,
+				$object->message,
+				$object->link,
+				$object->permalink_url,
+				$object->updated_time,
+			);
+		}
+
 		public static function parse_time_string( string $input ): DateTime|null {
 			return date_create_from_format( 'Y-m-d\TH:i:sO', $input ) ?: null;
 		}
@@ -32,7 +43,7 @@ if ( ! class_exists( 'M1D1_FB_Post' ) ) {
 				return $output;
 			}
 
-			$lines = array_filter( array_map( 'trim', explode( "\n", $this->message ) ) );
+			$lines = array_values( array_filter( array_map( 'trim', explode( "\n", $this->message ) ) ) );
 			if ( ! $lines ) {
 				return $output;
 			}
@@ -69,7 +80,7 @@ if ( ! class_exists( 'M1D1_FB_Post' ) ) {
 			}
 
 			if ( $head < $tail ) {
-				$output->description = implode( "\n", array_slice( $lines, $head, $tail ) );
+				$output->description = implode( "\n", array_slice( $lines, $head, $tail - $head  ) );
 			}
 
 			return $output;

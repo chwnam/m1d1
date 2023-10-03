@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       1일1메탈 데이터베이스
- * Version:           1.1.2
+ * Version:           1.2.0
  * Description:       1일1메탈 수집곡을 보관하고 포스팅 아카이빙하는 워드프레스 플러그인.
  * Plugin URI:        https://github.com/chwnam/m1d1
  * Requires at least:
@@ -14,7 +14,7 @@
  */
 
 const M1D1_MAIN    = __FILE__;
-const M1D1_VERSION = '1.1.2';
+const M1D1_VERSION = '1.2.0';
 
 require_once __DIR__ . '/vendor/autoload.php';
 

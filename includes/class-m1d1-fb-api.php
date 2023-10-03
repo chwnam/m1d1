@@ -171,14 +171,7 @@ if ( ! class_exists( 'M1D1_FB_API' ) ) {
 
 				foreach ( $response->data as $post ) {
 					if ( str_starts_with( trim( $post->message ), '#1일1메탈' ) ) {
-						$posts[] = new M1D1_FB_Post(
-							$post->id,
-							$post->created_time,
-							$post->message,
-							$post->link,
-							$post->permalink_url,
-							$post->updated_time,
-						);
+						$posts[] = M1D1_FB_Post::from_json( $post );
 					}
 				}
 
