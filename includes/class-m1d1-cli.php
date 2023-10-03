@@ -50,8 +50,6 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 		/**
 		 * Grab user posts
 		 *
-		 * @subcommand dump-posts
-		 *
 		 * ## OPTIONS
 		 * [<max_loop>]
 		 * : Maximum loop.
@@ -86,8 +84,6 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 
 		/**
 		 * Import #1일1메탈 posts to table
-		 *
-		 * @subcommaind import-posts
 		 *
 		 * ## OPTIONS
 		 * [<max_loop>]
@@ -204,8 +200,6 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 
 		/**
 		 * Import 1일1메탈 Yotube Music playlist to table
-		 *
-		 * @subcommand import-playlist
 		 *
 		 * @throws WP_CLI\ExitException
 		 */
