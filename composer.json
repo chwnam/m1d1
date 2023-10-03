@@ -1,0 +1,12 @@
+{
+  "name": "changwoo/m1d1",
+  "description": "1일1메탈 데이터베이스",
+  "autoload": {
+    "classmap": [
+      "includes"
+    ],
+    "files": [
+      "includes/functions.php"
+    ]
+  }
+}
