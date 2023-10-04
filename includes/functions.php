@@ -1,5 +1,44 @@
 <?php
 
+if ( ! function_exists( 'm1d1_template' ) ) {
+	function m1d1_template( string $template_name, array $context = [], bool $return = false ): string {
+		$part = dirname( M1D1_MAIN ) . '/includes/templates/' . ltrim( $template_name, '/' );
+		$exts = [ '.inc.php', '.php', '.html', '.htm' ];
+		$path = '';
+
+		foreach ( $exts as $ext ) {
+			$tmpl = $part . $ext;
+			if ( file_exists( $tmpl ) ) {
+				$path = $tmpl;
+				break;
+			}
+		}
+
+		$output = '';
+
+		if ( $return ) {
+			ob_start();
+		}
+
+		$closure = function () use ( $path, $context ) {
+			if ( $path ) {
+				if ( $context ) {
+					extract( $context, EXTR_SKIP );
+				}
+				include $path;
+			}
+		};
+
+		$closure();
+
+		if ( $return ) {
+			$output = ob_get_clean();
+		}
+
+		return $output;
+	}
+}
+
 if ( ! function_exists( 'm1d1_get_app_id' ) ) {
 	/**
 	 * Get APP ID
