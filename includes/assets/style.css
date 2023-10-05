@@ -1,4 +1,12 @@
 .d1m1 {
+    .hidden {
+        display: none;
+    }
+
+    & a {
+        text-decoration: none;
+    }
+
     & label {
         cursor: pointer;
         display: inline-block;
@@ -39,35 +47,72 @@
             background-color: black;
             border-bottom: 1px solid black;
             color: white;
+
+            &.col-artist, &.col-title {
+                text-align: left;
+            }
+
+            &.col-rating {
+                text-align: right;
+            }
         }
 
-        & > tbody td {
-            border-bottom: 1px solid black;
-        }
+        & > tbody {
+            & > tr:nth-of-type(4n+3),
+            & > tr:nth-of-type(4n+4) {
+                background-color: #e7e7e7;
+            }
 
-        & > tbody .col-artist,
-        & > tbody .col-title {
-            max-width: 12rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+            & > tr.row:hover {
+                background-color: #a0a0a0;
+                cursor: pointer;
+            }
 
-        & > tbody .col-title > a {
-            text-decoration: none;
-        }
+            & td {
+                border-bottom: 1px solid black;
+            }
 
-        & > tbody .col-seq {
-            text-align: center;
-        }
+            & .col-seq {
+                text-align: center;
+            }
 
-        & > tbody .col-rating {
-            text-align: right;
-        }
+            & .col-artist, & .col-title {
+                max-width: 8rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
 
-        & tr > th:not(:last-of-type),
-        & tr > td:not(:last-of-type) {
-            border-right: 1px solid black;
+            & .col-rating {
+                text-align: right;
+            }
+
+            & .data-col {
+                padding-bottom: 0.5rem;
+
+                & > ul {
+                    margin: 0;
+                    line-height: 1.7;
+                    list-style-type: none;
+                    padding: 0.5rem 1rem;
+
+                    & .label {
+                        font-weight: bold;
+                        margin: 0;
+                        min-width: 10rem;
+                    }
+
+                    & span.label {
+                        display: inline-block;
+                    }
+
+                    & p.label {
+                        border-top: 1px dotted black;
+                        margin-top: 0.5rem;
+                        margin-bottom: 0.5rem;
+                    }
+                }
+            }
         }
     }
 }

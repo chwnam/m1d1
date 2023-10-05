@@ -169,3 +169,40 @@ if ( ! function_exists( 'm1d1_get_fb_api' ) ) {
 		return new M1D1_FB_API( $app_id, $app_secret, $client_token );
 	}
 }
+
+
+if ( ! function_exists( 'm1d1_get_facebook_permalink_url' ) ) {
+	function m1d1_get_facebook_permalink_url( string $fb_id ): string {
+		if ( preg_match( '/^(\d+)_(\d+)$/', $fb_id, $matches ) ) {
+			return "https://www.facebook.com/$matches[1]/posts/$matches[2]";
+		} else {
+			return '';
+		}
+	}
+}
+
+
+if ( ! function_exists( 'm1d1_get_youtube_music_url' ) ) {
+	function m1d1_get_youtube_music_url( string $fb_id ): string {
+		$fb_id = urlencode( $fb_id );
+		if ( $fb_id ) {
+			return "https://youtube.com/watch?v=$fb_id";
+		} else {
+			return '';
+		}
+	}
+}
+
+
+if ( ! function_exists( 'm1d1_get_datetime' ) ) {
+	function m1d1_get_datetime( $input ): DateTimeImmutable|false {
+		$timezone = new DateTimeZone( 'Asia/Seoul' );
+		$datetime = date_create_immutable_from_format( 'Y-m-d H:i:s', $input, $timezone );
+
+		if ( $datetime ) {
+			$datetime->setTimezone( $timezone );
+		}
+
+		return $datetime;
+	}
+}
