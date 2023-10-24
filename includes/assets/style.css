@@ -1,4 +1,40 @@
-.d1m1 {
+input[type="number"].no-spinner {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+#excluded-artists > .table {
+    grid-template-columns: 1fr 1fr;
+}
+
+#playlist-table > .table {
+    grid-template-columns: 4rem 0.75fr 1fr 0.25fr;
+
+    &.table-body > .row {
+        cursor: pointer;
+    }
+}
+
+.m1d1 {
+    --button-color: #303030;
+    --stripe-color: #e7e7e7;
+    --hover-color: #a0a0a0;
+
+    & button {
+        background-color: black;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2em;
+        font-weight: 500;
+        outline: none;
+        padding: 8px 16px;
+    }
+
     .hidden {
         display: none;
     }
@@ -13,6 +49,25 @@
         margin-right: 2rem;
     }
 
+    & .search-wrap {
+        position: relative;
+
+        & > #keyword {
+            position: static;
+        }
+
+        & > #clear {
+            border-radius: 6px;
+            border: none;
+            color: var(--button-color);
+            cursor: pointer;
+            font-size: 10px;
+            position: absolute;
+            right: 4px;
+            top: 6px;
+        }
+    }
+
     & .rows-count {
         font-size: 0.9em;
         margin-top: 2rem;
@@ -24,16 +79,51 @@
         text-align: right;
     }
 
-    & button {
-        background-color: black;
-        border: none;
-        color: white;
-        cursor: pointer;
-        font-size: 1.2em;
-        font-weight: 500;
-        outline: none;
-        padding: 8px 16px;
+    & .no-rows {
+        padding: 1rem;
+        text-align: center;
     }
+
+    & .pagination-wrap {
+        margin: 1.5rem 0 0;
+    }
+
+    & .grid-table {
+        & > .table {
+            display: grid;
+            grid-template-rows: auto;
+        }
+
+        & > .table-header {
+            border: none;
+            background-color: black;
+            color: white;
+            font-weight: bold;
+        }
+
+        & > .table-body {
+            & .col {
+                border-bottom: 1px solid black;
+            }
+
+            & .row:nth-of-type(2n) > .col {
+                background-color: var(--stripe-color);
+            }
+
+            & .row:hover > .col {
+                background-color: var(--hover-color);
+            }
+        }
+
+        & .col {
+            padding: 0.25rem 0.5rem;
+        }
+
+        & .contents {
+            display: contents;
+        }
+    }
+
 
     & table {
         border-collapse: collapse;
@@ -90,29 +180,66 @@
             & .data-col {
                 padding-bottom: 0.5rem;
 
-                & > ul {
-                    margin: 0;
-                    line-height: 1.7;
-                    list-style-type: none;
-                    padding: 0.5rem 1rem;
 
-                    & .label {
-                        font-weight: bold;
-                        margin: 0;
-                        min-width: 10rem;
-                    }
-
-                    & span.label {
-                        display: inline-block;
-                    }
-
-                    & p.label {
-                        border-top: 1px dotted black;
-                        margin-top: 0.5rem;
-                        margin-bottom: 0.5rem;
-                    }
-                }
             }
+        }
+    }
+}
+
+.pagination {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    & input {
+        font-size: 1.1rem;
+        max-width: 5rem;
+        margin: 0 0.25rem;
+        text-align: center;
+    }
+
+    & > .page-wrap {
+        margin-top: 0.2rem;
+    }
+
+    & > .arrow {
+        font-size: 1.6rem;
+        margin: 0 1.2rem;
+    }
+}
+
+#track-info {
+    width: 640px;
+    max-height: 75vh;
+    padding: 0.5rem 1rem;
+
+    & > p.close-wrap {
+        margin: 0.5rem 0;
+        text-align: right;
+        width: 100%;
+    }
+
+    & > ul {
+        margin: 0;
+        line-height: 1.7;
+        list-style-type: none;
+        padding: 0;
+
+        & .label {
+            font-weight: bold;
+            margin: 0;
+            min-width: 10rem;
+        }
+
+        & span.label {
+            display: inline-block;
+        }
+
+        & p.label {
+            border-top: 1px dotted black;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
         }
     }
 }

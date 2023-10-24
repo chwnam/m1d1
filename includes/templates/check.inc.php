@@ -4,19 +4,26 @@
  *
  * @var string $keyword
  * @var int    $total_count
+ * @var int    $max_page
+ * @var int    $cur_page
  * @var array  $rows
  */
 ?>
 
-<div class="d1m1">
-    <h1>1D1M Check</h1>
+<div class="m1d1">
+    <h1>M1D1 Check</h1>
 
     <form action="" method="get">
         <fieldset>
             <legend>Search</legend>
             <label for="keyword">Keyword</label>
-            <input id="keyword" name="keyword" type="search" autocomplete="off"
-                   value="<?php echo esc_attr( $keyword ); ?>">
+            <span class="search-wrap"><input id="keyword"
+                                             name="keyword"
+                                             type="search"
+                                             autocomplete="off"
+                                             value="<?php echo esc_attr( $keyword ); ?>"><input id="clear"
+                                                                                                type="button"
+                                                                                                value="X"></span>
         </fieldset>
         <p class="button-wrap">
             <button type="submit">Submit</button>
@@ -26,102 +33,81 @@
 	<?php if ( $rows ) : ?>
         <p class="total-count">
 			<?php
-			printf( _nx( '%d track found.', '%d tracks found.', $total_count, 'Total tracks.', 'm1d1' ), $total_count );
+			printf( _n( '%d track found.', '%d tracks found.', $total_count, 'm1d1' ), $total_count );
 			?>
         </p>
-        <table class="playlist-table">
-            <thead>
-            <tr>
-                <th class="col-seq">Seq.</th>
-                <th class="col-artist">Artist</th>
-                <th class="col-title">Title</th>
-                <th class="col-rating">Rating</th>
-            </tr>
-            </thead>
-            <tbody>
-			<?php foreach ( $rows as $row ): ?>
-                <tr class="row" data-id="<?php echo esc_attr( $row->id ); ?>">
-                    <td class="col-seq"><?php echo esc_html( $row->sequence ); ?></td>
-                    <td class="col-artist"><?php echo esc_html( $row->artist ); ?></td>
-                    <td class="col-title"><?php echo esc_html( $row->title ); ?></td>
-                    <td class="col-rating"><?php echo esc_html( $row->rating ); ?></td>
-                </tr>
-                <tr class="data-row hidden" data-id="<?php echo esc_attr( $row->id ); ?>">
-                    <td class="data-col" colspan="4">
-                        <ul>
-                            <li>
-                                <span class="label">ID</span>
-								<?php echo esc_html( $row->id ); ?>
-                            </li>
-                            <li>
-                                <span class="label">Facebook</span>
-								<?php if ( $row->fb_id ) : ?>
-                                    <a href="<?php echo esc_url( m1d1_get_facebook_permalink_url( $row->fb_id ) ); ?>"
-                                       target="_blank">
-                                        Visit
-                                    </a>
-								<?php else : ?>
-                                    No Post ID
-								<?php endif; ?>
-                            </li>
-                            <li>
-                                <span class="label">Youtube Music</span>
-								<?php if ( $row->yt_id ): ?>
-                                    <a href="<?php echo esc_url( m1d1_get_youtube_music_url( $row->yt_id ) ); ?>"
-                                       target="_blank">
-                                        Watch
-                                    </a>
-								<?php else : ?>
-                                    No Video ID
-								<?php endif; ?>
-                            </li>
-                            <li>
-                                <span class="label">Artist</span>
-								<?php echo esc_html( $row->artist ); ?>
-                            </li>
-                            <li>
-                                <span class="label">Title</span>
-								<?php echo esc_html( $row->title ); ?>
-                            </li>
-                            <li>
-                                <span class="label">Length</span>
-								<?php echo esc_html( $row->length ); ?>
-                            </li>
-                            <li>
-                                <span class="label">Rating</span>
-								<?php if ( $row->rating ) : ?>
-									<?php echo esc_html( $row->rating ); ?>
-								<?php else : ?>
-                                    No Rating
-								<?php endif; ?>
-                            </li>
-                            <li>
-                                <span class="label">Created At</span>
-								<?php echo esc_html( $row->created_time ); ?>
-                            </li>
-                            <li>
-                                <span class="label">Updated At</span>
-								<?php if ( $row->created_time !== $row->updated_time ) : ?>
-									<?php echo esc_html( $row->updated_time ); ?>
-								<?php else : ?>
-                                    No Update
-								<?php endif; ?>
-                            </li>
-                            <li>
-                                <p class="label">Description</p>
-								<?php if ( $row->description ) : ?>
-									<?php echo esc_html( $row->description ); ?>
-								<?php else : ?>
-                                    No Description
-								<?php endif; ?>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-			<?php endforeach; ?>
-            </tbody>
-        </table>
+        <div id="playlist-table" class="grid-table">
+            <section class="table table-header">
+                <div class="row row-0 contents">
+                    <span class="col col seq">Seq.</span>
+                    <span class="col col-artist">Artist</span>
+                    <span class="col col-title">Title</span>
+                    <span class="col col-rating">Rating</span>
+                </div>
+            </section>
+            <section class="table table-body">
+				<?php foreach ( $rows as $idx => $row ): ?>
+                    <div class="row row-<?php echo esc_attr( $idx ); ?> contents"
+                         data-row="<?php echo esc_attr( json_encode( $row ) ); ?>">
+                        <span class="col col-seq"><?php echo esc_html( $row->sequence ); ?></span>
+                        <span class="col col-artist"><?php echo esc_html( $row->artist ); ?></span>
+                        <span class="col col-title"><?php echo esc_html( $row->title ); ?></span>
+                        <span class="col col-rating"><?php echo esc_html( $row->rating ); ?></span>
+                    </div>
+				<?php endforeach; ?>
+            </section>
+        </div>
+
+		<?php m1d1_pagination( $cur_page, $max_page, 'playlist' ); ?>
+
+        <dialog id="track-info">
+            <ul>
+                <li>
+                    <span class="label">ID</span>
+                    <span id="dialog-id" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Facebook</span>
+                    <span id="dialog-fb-link" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Youtube Music</span>
+                    <span id="dialog-yt-link" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Artist</span>
+                    <span id="dialog-artist" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Title</span>
+                    <span id="dialog-title" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Length</span>
+                    <span id="dialog-length" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Rating</span>
+                    <span id="dialog-rating" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Created At</span>
+                    <span id="dialog-created_at" class="value"></span>
+                </li>
+                <li>
+                    <span class="label">Updated At</span>
+                    <span id="dialog-updated_at" class="value"></span>
+                </li>
+                <li>
+                    <p class="label">Description</p>
+                    <p id="dialog-description" class="value"></p>
+                </li>
+            </ul>
+            <p class="close-wrap ">
+                <button class="close" autofocus>Close</button>
+            </p>
+        </dialog>
 	<?php else: ?>
-        <p class="no-data">No results.</p>
+        <p class="no-rows">No found rows.</p>
 	<?php endif; ?>
 </div>

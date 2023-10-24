@@ -29,7 +29,7 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 				$status = $fb_api->device_login_status( $code );
 				if ( isset( $status->error ) ) {
 					match ( $status->error->error_subcode ) {
-						1349174 => WP_CLI::line( "Polling and waiting response ..." ),
+						1349174          => WP_CLI::line( "Polling and waiting response ..." ),
 						1349152, 1349172 => WP_CLI::error( $status->error->error_user_msg ),
 					};
 				} else {
@@ -261,6 +261,34 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 			}
 		}
 
+		/**
+		 * M1D1 아티스트에서 rapl_excluded_artists 테이블로 자료 내보내기.
+		 *
+		 * @return void
+		 */
+		public function export_exclude(): void {
+			global $wpdb;
+
+			/**
+			 * 새로 넣어야 할 wp_rapl_artists.id 값을 추출.
+			 * 1. wp_m1d1_playlist 에만 있는 아티스트 이름 제외.
+			 * 2. 이미 wp_rapl_excluded_artists 테이블에 존재하는 id 는 제외.
+			 */
+			$wpdb->query(
+				"INSERT INTO {$wpdb->prefix}rapl_excluded_artists " .
+				"(SELECT a.id, NOW() FROM {$wpdb->prefix}m1d1_playlist AS p" .
+				" LEFT JOIN {$wpdb->prefix}rapl_artists AS a ON a.name = p.artist" .
+				" WHERE a.id IS NOT NULL" .
+				" AND a.id NOT IN (SELECT artist_id FROM {$wpdb->prefix}rapl_excluded_artists))"
+			);
+
+			WP_CLI::success(
+				sprintf(
+					_n( '%d row inserted.', '%d rows inserted', $wpdb->rows_affected, 'm1d1' ),
+					$wpdb->rows_affected
+				)
+			);
+		}
 
 		/**
 		 * @param M1D1_FB_API $fb_api

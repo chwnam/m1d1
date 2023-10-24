@@ -206,3 +206,14 @@ if ( ! function_exists( 'm1d1_get_datetime' ) ) {
 		return $datetime;
 	}
 }
+
+
+if ( ! function_exists( 'm1d1_pagination' ) ) {
+	function m1d1_pagination( int $cur_page, int $max_page, string $pagination_id = '', string $base_url = '' ): void {
+		if ( empty( $pagination_id ) ) {
+			$pagination_id = strtolower( wp_generate_password( 6, false ) );
+		}
+
+		m1d1_template( 'pagination', compact( 'base_url', 'cur_page', 'max_page', 'pagination_id' ) );
+	}
+}
