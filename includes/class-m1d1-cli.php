@@ -109,9 +109,8 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 			foreach ( $posts as $post ) {
 				$playlist = M1D1_Playlist::from_fb_post( $post );
 				if ( $playlist->fb_id ) {
-					$playlists[ $playlist->fb_id ] = $playlist;
+					$playlists[ $playlist->sequence ] = $playlist;
 				}
-
 			}
 
 			$to_insert = [];
@@ -119,24 +118,19 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 
 			// Check for updates.
 			if ( $playlists ) {
-				$placeholder = implode( ', ', array_pad( [], count( $playlists ), '%s' ) );
+				$placeholder = implode( ', ', array_pad( [], count( $playlists ), '%d' ) );
 
 				$query = $wpdb->prepare(
-					"SELECT fb_id, updated_time FROM {$wpdb->prefix}m1d1_playlist" .
-					" WHERE fb_id IN ($placeholder)",
+					"SELECT sequence, fb_id, updated_time FROM {$wpdb->prefix}m1d1_playlist" .
+					" WHERE sequence IN ($placeholder)",
 					array_keys( $playlists ),
 				);
 
 				$existing_posts = $wpdb->get_results( $query, OBJECT_K );
 
 				foreach ( $playlists as $playlist ) {
-					if ( isset( $existing_posts[ $playlist->fb_id ] ) ) {
-						$updated_time = date_create_from_format(
-							'Y-m-d H:i:s',
-							$existing_posts[ $playlist->fb_id ]->updated_time,
-							$timezone
-						);
-						if ( $playlist->updated_time->getTimestamp() != $updated_time->getTimestamp() ) {
+					if ( isset( $existing_posts[ $playlist->sequence ] ) ) {
+						if ( $playlist->fb_id != $existing_posts[ $playlist->sequence ]->fb_id ) {
 							// Changed.
 							$to_update[] = $playlist;
 							WP_CLI::line( $playlist->sequence . ' will be updated' );
@@ -150,6 +144,7 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 
 			if ( ! $to_update && ! $to_insert ) {
 				WP_CLI::success( '🤟 All posts are fetched. Nothing to do for now! 🤟' );
+				return;
 			}
 
 			if ( $to_update ) {
