@@ -150,9 +150,11 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 			if ( $to_update ) {
 				$to_update = array_reverse( $to_update );
 				foreach ( $to_update as $playlist ) {
+					/** @var M1D1_Playlist $playlist */
 					$wpdb->update(
 						"{$wpdb->prefix}m1d1_playlist",
 						[
+							'fb_id'        => $playlist->fb_id,
 							'artist'       => $playlist->artist,
 							'title'        => $playlist->title,
 							'description'  => $playlist->description,
@@ -162,7 +164,7 @@ if ( ! class_exists( 'M1D1_CLI' ) ) {
 								? wp_date( 'Y-m-d H:i:s', $playlist->updated_time->getTimestamp(), $timezone )
 								: null,
 						],
-						[ 'fb_id' => $playlist->fb_id ],
+						[ 'sequence' => $playlist->sequence ],
 					);
 					WP_CLI::success( 'Sequence ' . $playlist->sequence . ' is succeessfully updated.' );
 				}
